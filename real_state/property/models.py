@@ -74,5 +74,10 @@ class Property(models.Model):
     area = models.DecimalField(max_digits=10, decimal_places=2)
     ads_id = models.ForeignKey('ads.Ads', on_delete=models.CASCADE, related_name='property_ids')
 
+    def __str__(self):
+        return self.title
 
+class PropertyImage(models.Model):
+    property_id = models.ForeignKey(Property, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='property/images/', blank=False)
 

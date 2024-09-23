@@ -33,3 +33,6 @@ class User(models.Model):
     is_company = models.BooleanField()
     property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id')
 
+
+    def __str__(self):
+        return self.user_name
