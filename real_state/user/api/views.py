@@ -8,10 +8,17 @@ def user_details(request,id):
     if request.method == 'GET':
         user = User.objects.get(pk=id)
         user_json = UserSerializer(user)
-        return Response(user_json.data)
+        return Response(data=user_json.data, status=200)
     return Response({"error message": "xxxxxx"})
 
-def users_details(request,id):
-    return "Response(user_json.data)"
+@api_view(['GET'])
+def all_user(request):
+    if request.method == 'GET':
+        user = User.objects.all()
+        user_json = UserSerializer(user,many=True)
+        return Response(data=user_json.data, status=200)
+    return Response({"error message": "xxxxxx"})
+
+
 
 
