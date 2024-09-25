@@ -6,32 +6,23 @@ from property.models import *
 # Create your models here.
 class User(models.Model):
     countries = [
-    ('SA', 'Saudi Arabia'),
-    ('AE', 'United Arab Emirates'),
     ('EG', 'Egypt'),
-    ('IQ', 'Iraq'),
-    ('JO', 'Jordan'),
-    ('MA', 'Morocco'),
-    ('KW', 'Kuwait'),
-    ('QA', 'Qatar'),
-    ('OM', 'Oman'),
-    ('DZ', 'Algeria'),
 ]
 
     id = models.AutoField(primary_key=True)
-    user_name = models.CharField(max_length=25,unique=True,blank=False)
-    image = models.ImageField(upload_to='user/images/profile/')
-    email = models.CharField(max_length=254,unique=True, validators=[EmailValidator()])
+    user_name = models.CharField(max_length=25,unique=True,blank=False,null=True)
+    image = models.ImageField(upload_to='user/images/profile/',null=True,blank=True)
+    email = models.CharField(max_length=254,unique=True, validators=[EmailValidator()],blank=False)
     password = models.CharField(max_length=50,blank=False)
-    country = models.CharField(max_length=2, choices=countries,blank=False)
-    city = models.CharField(max_length=50,blank=False)
-    street = models.CharField(max_length=50,blank=False)
-    address = models.TextField(blank=False)
+    country = models.CharField(max_length=2, choices=countries,null=True,blank=True)
+    city = models.CharField(max_length=50,null=True,blank=True)
+    street = models.CharField(max_length=50,null=True,blank=True)
+    address = models.TextField(null=True,blank=True)
     phone = models.CharField(blank=False,max_length=11)
-    another_phone = models.CharField(max_length=11)
-    register_photo = models.ImageField(upload_to='user/images/register/')
-    is_company = models.BooleanField()
-    property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id')
+    another_phone = models.CharField(max_length=11,null=True,blank=True)
+    register_photo = models.ImageField(upload_to='user/images/register/',null=True,blank=True)
+    is_company = models.BooleanField(null=True,blank=True)
+    property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True,blank=True)
 
 
     def __str__(self):
