@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'property.apps.PropertyConfig',
     'ads.apps.AdsConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
