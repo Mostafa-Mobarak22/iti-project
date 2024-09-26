@@ -3,6 +3,7 @@ from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 from property.models import *
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your models here.
 class User(models.Model):
     countries = [
@@ -24,7 +25,12 @@ class User(models.Model):
     is_company = models.BooleanField(default=False)
     property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True)
 
-
+    def get_tokens_for_user(self):
+        token = RefreshToken.for_user(self)
+        return {
+            'token': str(token),
+            'access': str(token.access_token),
+        }
 
     def __str__(self):
         return self.user_name

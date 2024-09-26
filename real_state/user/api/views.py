@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework.decorators import api_view
-
+# from django.contrib.auth.models import User as token
 @api_view(['GET'])
 def user_details(request,id):
     if request.method == 'GET':
@@ -32,6 +32,10 @@ def add_user(request):
                 return Response({"error message": "This user already exists"})
         if user.is_valid():
             user.save()
+            user_token = User.objects.get(user_name=request.data['user_name'])
+            print(user_token)
+            print(User.get_tokens_for_user(user_token))
+
             return Response({"success message": "User Is Add"},status=status.HTTP_201_CREATED)
         else:
             return Response(user.errors,status=status.HTTP_400_BAD_REQUEST)

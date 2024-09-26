@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'property.apps.PropertyConfig',
     'ads.apps.AdsConfig',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
