@@ -10,19 +10,20 @@ class User(models.Model):
 ]
 
     id = models.AutoField(primary_key=True)
-    user_name = models.CharField(max_length=25,unique=True,blank=False,null=True)
-    image = models.ImageField(upload_to='user/images/profile/',null=True,blank=True)
+    user_name = models.CharField(max_length=25,unique=True,blank=False)
+    image = models.ImageField(upload_to='user/images/profile/',null=True)
     email = models.CharField(max_length=254,unique=True, validators=[EmailValidator()],blank=False)
     password = models.CharField(max_length=50,blank=False)
-    country = models.CharField(max_length=2, choices=countries,null=True,blank=True)
-    city = models.CharField(max_length=50,null=True,blank=True)
-    street = models.CharField(max_length=50,null=True,blank=True)
-    address = models.TextField(null=True,blank=True)
-    phone = models.CharField(blank=False,max_length=11)
-    another_phone = models.CharField(max_length=11,null=True,blank=True)
-    register_photo = models.ImageField(upload_to='user/images/register/',null=True,blank=True)
-    is_company = models.BooleanField(null=True,blank=True)
-    property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True,blank=True)
+    country = models.CharField(max_length=2, choices=countries,null=True)
+    city = models.CharField(max_length=50,null=True)
+    street = models.CharField(max_length=50,null=True)
+    address = models.TextField(null=True,default='')
+    phone = models.CharField(blank=False,max_length=11,unique=True)
+    another_phone = models.CharField(max_length=11,null=True)
+    register_photo = models.ImageField(upload_to='user/images/register/',null=True)
+    is_company = models.BooleanField(null=True)
+    property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True)
+
 
 
     def __str__(self):

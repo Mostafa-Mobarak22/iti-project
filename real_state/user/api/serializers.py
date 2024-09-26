@@ -1,20 +1,19 @@
 from rest_framework import serializers
 from django.core.validators import EmailValidator
-class UserSerializer(serializers.Serializer):
-    countries = [
-        ('EG', 'Egypt'),
-    ]
-
-    id = serializers.IntegerField(read_only=True)
-    user_name = serializers.CharField(max_length=25)
-    image = serializers.ImageField(required=False)
-    email = serializers.CharField(max_length=254,validators=[EmailValidator()])
-    password = serializers.CharField(max_length=50)
-    country = serializers.ChoiceField(countries,required=False)
-    city = serializers.CharField(max_length=50,required=False)
-    street = serializers.CharField(max_length=50,required=False)
-    address = serializers.CharField(required=False)
-    phone = serializers.CharField(max_length=11)
-    another_phone = serializers.CharField(max_length=11,required=False)
-    register_photo = serializers.ImageField(required=False)
-    is_company = serializers.BooleanField(required=False)
+from rest_framework.validators import UniqueValidator
+from ..models import *
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        extra_kwargs = {
+            'image': {'required': False, 'allow_null': True},
+            'country': {'required': False, 'allow_null': True},
+            'city': {'required': False, 'allow_null': True},
+            'street': {'required': False, 'allow_null': True},
+            'address': {'required': False, 'allow_null': True},
+            'another_phone': {'required': False, 'allow_null': True},
+            'register_photo': {'required': False, 'allow_null': True},
+            'is_company': {'required': False, 'allow_null': True},
+            'property_ids': {'required': False, 'allow_null': True},
+        }

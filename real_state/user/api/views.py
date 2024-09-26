@@ -1,3 +1,5 @@
+from django.template.context_processors import request
+
 from ..models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -24,12 +26,16 @@ def all_user(request):
 def add_user(request):
     if request.method == 'POST':
         user = UserSerializer(data=request.data)
+        print('djkbkv')
+        if User.objects.filter(**request.data).exists():
+            print('djkbkv')
+            raise serializers.ValidationError('This data already exists')
         if user.is_valid():
-            user.create(User,user.user_name,user.email,user.password,user.phone)
+            user.save()
             return Response({"success message": "User Is Add"},status=status.HTTP_201_CREATED)
         else:
             print('ll')
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(user.errors,status=status.HTTP_400_BAD_REQUEST)
     return Response({"error message": "xxxxxx"})
 
 
