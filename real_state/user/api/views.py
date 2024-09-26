@@ -29,7 +29,7 @@ def add_user(request):
         for field in fields :
             field_user = {field:fields[field]}
             if User.objects.filter(**field_user).exists():
-                return Response({"error message": "This data already exists"})
+                return Response({"error message": "This user already exists"})
         if user.is_valid():
             user.save()
             return Response({"success message": "User Is Add"},status=status.HTTP_201_CREATED)
@@ -41,6 +41,12 @@ def add_user(request):
 def update_user(request,id):
     user = User.objects.get(pk=id)
     user_json = UserSerializer(instance=user,data=request.data)
+    filterable_fields = ['username', 'email', "phone"]
+    fields = {key: request.data[key] for key in filterable_fields if key in request.data}
+    for field in fields:
+        field_user = {field: fields[field]}
+        if User.objects.filter(**field_user).exists():
+            return Response({"error message": "This user already exists"})
     if user_json.is_valid():
         user_json.save()
         return Response(user_json.data)
@@ -60,6 +66,12 @@ def patch_user(request,id):
     user = User.objects.get(pk=id)
     if request.method == 'PATCH':
         user_json = UserSerializer(user,data=request.data,partial=True)
+        filterable_fields = ['username','email',"phone"]
+        fields = {key: request.data[key] for key in filterable_fields if key in request.data}
+        for field in fields :
+            field_user = {field:fields[field]}
+            if User.objects.filter(**field_user).exists():
+                return Response({"error message": "This data already exists"})
         if user_json.is_valid():
             user_json.save()
             return Response(user_json.data)
