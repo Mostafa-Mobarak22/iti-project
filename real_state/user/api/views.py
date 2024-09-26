@@ -54,6 +54,14 @@ def delete_user(request,id):
         return Response(data={'msg':'deleted'})
     return Response({'msg':'user not found'})
 
-
+@api_view(['PATCH'])
+def patch_user(request,id):
+    user = User.objects.get(pk=id)
+    if request.method == 'PATCH':
+        user_json = UserSerializer(user,data=request.data,partial=True)
+        if user_json.is_valid():
+            user_json.save()
+            return Response(user_json.data)
+        return Response(user_json.errors,status=status.HTTP_400_BAD_REQUEST)
 
 

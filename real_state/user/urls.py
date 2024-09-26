@@ -6,4 +6,5 @@ urlpatterns = [
     path('add/user/',add_user),
     path('update/user/<int:id>',update_user),
     path('delete/user/<int:id>',delete_user),
+    path('<int:id>/',patch_user),
 ]
