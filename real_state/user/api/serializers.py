@@ -14,6 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
             'address': {'required': False, 'allow_null': True},
             'another_phone': {'required': False, 'allow_null': True},
             'register_photo': {'required': False, 'allow_null': True},
-            'is_company': {'required': False, 'allow_null': True},
+            'is_company': {'required': False},
             'property_ids': {'required': False, 'allow_null': True},
         }

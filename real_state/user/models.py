@@ -21,7 +21,7 @@ class User(models.Model):
     phone = models.CharField(blank=False,max_length=11,unique=True)
     another_phone = models.CharField(max_length=11,null=True)
     register_photo = models.ImageField(upload_to='user/images/register/',null=True)
-    is_company = models.BooleanField(null=True)
+    is_company = models.BooleanField(default=False)
     property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True)
 
 

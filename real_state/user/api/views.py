@@ -1,5 +1,3 @@
-from django.template.context_processors import request
-
 from ..models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -37,6 +35,24 @@ def add_user(request):
             print('ll')
             return Response(user.errors,status=status.HTTP_400_BAD_REQUEST)
     return Response({"error message": "xxxxxx"})
+
+@api_view(['PUT'])
+def update_user(request,id):
+    user = User.objects.get(pk=id)
+    user_json = UserSerializer(instance=user,data=request.data)
+    if user_json.is_valid():
+        user_json.save()
+        return Response(user_json.data)
+    else:
+        return Response(user_json.errors,status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['DELETE'])
+def delete_user(request,id):
+    user=User.objects.filter(id=id)
+    if(len(user)>0):
+        user.delete()
+        return Response(data={'msg':'deleted'})
+    return Response({'msg':'user not found'})
 
 
 
