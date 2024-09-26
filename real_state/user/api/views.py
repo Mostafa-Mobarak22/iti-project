@@ -24,17 +24,18 @@ def all_user(request):
 def add_user(request):
     if request.method == 'POST':
         user = UserSerializer(data=request.data)
-        print('djkbkv')
-        if User.objects.filter(**request.data).exists():
-            print('djkbkv')
-            raise serializers.ValidationError('This data already exists')
+        filterable_fields = ['username','email',"phone"]
+        fields = {key: request.data[key] for key in filterable_fields if key in request.data}
+        for field in fields :
+            field_user = {field:fields[field]}
+            if User.objects.filter(**field_user).exists():
+                return Response({"error message": "This data already exists"})
         if user.is_valid():
             user.save()
             return Response({"success message": "User Is Add"},status=status.HTTP_201_CREATED)
         else:
-            print('ll')
             return Response(user.errors,status=status.HTTP_400_BAD_REQUEST)
-    return Response({"error message": "xxxxxx"})
+    return Response({"error message": "invalid method"})
 
 @api_view(['PUT'])
 def update_user(request,id):
