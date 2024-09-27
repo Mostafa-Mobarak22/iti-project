@@ -2,6 +2,7 @@ from ..models import *
 from rest_framework import status
 from rest_framework.response import Response
 from .serializers import *
+import jwt,datetime
 from rest_framework.decorators import api_view
 # from django.contrib.auth.models import User as token
 @api_view(['GET'])
@@ -10,7 +11,7 @@ def user_details(request,id):
         user = User.objects.get(pk=id)
         user_json = UserSerializer(user)
         return Response(data=user_json.data, status=200)
-    return Response({"error message": "xxxxxx"})
+    return Response({"error message": "not found user"})
 
 @api_view(['GET'])
 def all_user(request):
@@ -32,10 +33,6 @@ def add_user(request):
                 return Response({"error message": "This user already exists"})
         if user.is_valid():
             user.save()
-            user_token = User.objects.get(user_name=request.data['user_name'])
-            print(user_token)
-            print(User.get_tokens_for_user(user_token))
-
             return Response({"success message": "User Is Add"},status=status.HTTP_201_CREATED)
         else:
             return Response(user.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -81,4 +78,21 @@ def patch_user(request,id):
             return Response(user_json.data)
         return Response(user_json.errors,status=status.HTTP_400_BAD_REQUEST)
 
-
+@api_view(['POST'])
+def login_user(request):
+    if request.method == 'POST':
+        user = LoginSerializer(data=request.data)
+        if User.objects.filter(user_name=request.data['user_name']).exists() :
+            if User.objects.get(user_name=request.data['user_name']).password ==request.data['password']:
+                get_user = User.objects.get(user_name=request.data['user_name'])
+                payload = {
+                    'id' : get_user.id,
+                    'exp':datetime.datetime.utcnow()+datetime.timedelta(hours=24),
+                    'iat':datetime.datetime.utcnow(),
+                }
+                token = jwt.encode(payload,'secret',algorithm='HS256')
+                return Response({"token":token})
+            else:
+                return Response({"error message": "password not correct"})
+        else:
+            return Response({"error message": "user_name not correct"})

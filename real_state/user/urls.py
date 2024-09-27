@@ -7,4 +7,5 @@ urlpatterns = [
     path('update/<int:id>/',update_user),
     path('delete/<int:id>/',delete_user),
     path('<int:id>/',patch_user),
+    path('login/',login_user),
 ]
