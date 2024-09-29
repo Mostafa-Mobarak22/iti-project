@@ -1,4 +1,4 @@
-from importlib.metadata import requires
+
 from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
 from django.db import models
