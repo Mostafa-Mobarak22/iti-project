@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from .serializers import *
 import jwt,datetime
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view
 # from django.contrib.auth.models import User as token
 @api_view(['GET'])
@@ -64,15 +65,20 @@ def delete_user(request,id):
 
 @api_view(['PATCH'])
 def patch_user(request,id):
+    parser_classes = (MultiPartParser, FormParser)
+    print(request.data)
+    print(request.FILES)
     user = User.objects.get(pk=id)
     if request.method == 'PATCH':
         user_json = UserSerializer(user,data=request.data,partial=True)
-        filterable_fields = ['username','email',"phone"]
-        fields = {key: request.data[key] for key in filterable_fields if key in request.data}
-        for field in fields :
-            field_user = {field:fields[field]}
-            if User.objects.filter(**field_user).exists():
-                return Response({"error message": "This data already exists"})
+        # filterable_fields = ['username','email',"phone"]
+        # fields = {key: request.data[key] for key in filterable_fields if key in request.data}
+        # for field in fields :
+        #     field_user = {field:fields[field]}
+        #     if User.objects.filter(**field_user).exists():
+        #         return Response({"error message": "This data already exists"})
+        print(request.data)
+        print(user_json)
         if user_json.is_valid():
             user_json.save()
             return Response(user_json.data)
@@ -91,8 +97,9 @@ def login_user(request):
                     'iat':datetime.datetime.utcnow(),
                 }
                 token = jwt.encode(payload,'secret',algorithm='HS256')
-                return Response({"token":token})
+                return Response({"token":token,"success":request.data['user_name']})
             else:
-                return Response({"error message": "password not correct"})
+                return Response({"error": "password not correct"})
         else:
-            return Response({"error message": "user_name not correct"})
+            return Response({"error": "user_name not correct"})
+    return Response({"error": "invalid method"})

@@ -7,24 +7,19 @@ from django.core.validators import MinLengthValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 # Create your models here.
 class User(models.Model):
-    countries = [
-    ('EG', 'Egypt'),
-]
-
     id = models.AutoField(primary_key=True)
     user_name = models.CharField(max_length=25,unique=True,blank=False,validators=[MinLengthValidator(5)])
-    image = models.ImageField(upload_to='user/images/profile/',null=True)
+    image = models.ImageField(upload_to='user/images/profile/',null=True,blank=True)
     email = models.CharField(max_length=254,unique=True, validators=[EmailValidator()],blank=False)
     password = models.CharField(max_length=50,blank=False,validators=[MinLengthValidator(8)])
-    country = models.CharField(max_length=2, choices=countries,null=True)
-    city = models.CharField(max_length=50,null=True)
-    street = models.CharField(max_length=50,null=True)
-    address = models.TextField(null=True,default='')
+    city = models.CharField(max_length=25,null=True,validators=[MinLengthValidator(3)],blank=True)
+    street = models.CharField(max_length=50,null=True,validators=[MinLengthValidator(5)],blank=True)
+    address = models.TextField(null=True,default='',blank=True)
     phone = models.CharField(blank=False,max_length=11,unique=True,validators=[MinLengthValidator(11)])
-    another_phone = models.CharField(max_length=11,null=True,validators=[MinLengthValidator(11)])
-    register_photo = models.ImageField(upload_to='user/images/register/',null=True)
+    another_phone = models.CharField(max_length=11,null=True,validators=[MinLengthValidator(11)],blank=True)
+    register_photo = models.ImageField(upload_to='user/images/register/',null=True,blank=True)
     is_company = models.BooleanField(default=False)
-    property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True)
+    property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True,blank=True)
 
     def get_tokens_for_user(self):
         token = RefreshToken.for_user(self)

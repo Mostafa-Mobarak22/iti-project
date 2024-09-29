@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.core.validators import EmailValidator
 from rest_framework.validators import UniqueValidator
 from ..models import *
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
