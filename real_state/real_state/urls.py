@@ -23,6 +23,8 @@ urlpatterns = [
     path('user/',include('user.urls')),
     path('property/', include('property.urls'))
 
+    path('ads/', include('ads.urls')
+
 
     # path('property',include('property.urls')),
     # path('ads',include('ads.urls')),
