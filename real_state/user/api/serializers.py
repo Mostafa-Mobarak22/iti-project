@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
             'another_phone': {'required': False, 'allow_null': True},
             'register_photo': {'required': False, 'allow_null': True},
             'is_company': {'required': False},
+            'is_active': {'required': False},
             'property_ids': {'required': False, 'allow_null': True},
         }
 class LoginSerializer(serializers.ModelSerializer):

@@ -4,4 +4,4 @@ from ads.models import Ads
 class Adserializer(serializers.ModelSerializer):
    class Meta:
         model = Ads
-        fields = '__all_
+        fields = '__all_'
