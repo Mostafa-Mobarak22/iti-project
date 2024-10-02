@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator ,MaxValueValidator, MinValueValidator
 from ads.models import *
 # Create your models here.
 class Property(models.Model):
@@ -62,7 +62,10 @@ class Property(models.Model):
     title = models.CharField(max_length=255,unique=False,blank=False)
     description = models.TextField(blank=False)
     property_type = models.CharField(max_length=11, choices=property_type,blank=False)
-    price = models.IntegerField()
+    price = models.IntegerField(blank=False)
+    is_published = models.BooleanField(default=False)
+    bed = models.IntegerField(null=True,default=1)
+    bath = models.IntegerField(null=True,default=1)
     location = models.CharField(max_length=255,blank=False , validators=[MinLengthValidator(5)])
     listed_date = models.DateTimeField(auto_now_add=True)
     country = models.CharField(max_length=2, choices=countries,blank=False)
@@ -73,6 +76,7 @@ class Property(models.Model):
     is_sale = models.CharField(max_length=4,blank=False, choices=sale_rent)
     image = models.ImageField(upload_to='property/images', blank=False)
     area = models.DecimalField(max_digits=10, decimal_places=2)
+
     ads_id = models.ForeignKey('ads.Ads', on_delete=models.CASCADE, related_name='property_ids',null=True,blank=True)
 
     def __str__(self):

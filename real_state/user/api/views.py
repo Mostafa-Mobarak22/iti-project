@@ -19,10 +19,13 @@ import base64
 @api_view(['GET'])
 def user_details(request,id):
     if request.method == 'GET':
-        user = User.objects.get(pk=id)
-        user_json = UserSerializer(user)
-        return Response(data=user_json.data, status=200)
-    return Response({"error message": "not found user"})
+        if User.objects.filter(pk=id).exists():
+            user = User.objects.get(pk=id)
+            user_json = UserSerializer(user)
+            return Response(data=user_json.data, status=200)
+        else:
+            return Response({"error_message": "account not found"})
+    return Response({"error_message": "invalid method"})
 
 @api_view(['GET'])
 def all_user(request):
@@ -58,19 +61,22 @@ def add_user(request):
 
 @api_view(['PUT'])
 def update_user(request,id):
-    user = User.objects.get(pk=id)
-    user_json = UserSerializer(instance=user,data=request.data)
-    filterable_fields = ['username', 'email', "phone"]
-    fields = {key: request.data[key] for key in filterable_fields if key in request.data}
-    for field in fields:
-        field_user = {field: fields[field]}
-        if User.objects.filter(**field_user).exists():
-            return Response({"error message": "This user already exists"})
-    if user_json.is_valid():
-        user_json.save()
-        return Response(user_json.data)
+    if User.objects.filter(pk=id).exists():
+        user = User.objects.get(pk=id)
+        user_json = UserSerializer(instance=user,data=request.data)
+        filterable_fields = ['username', 'email', "phone"]
+        fields = {key: request.data[key] for key in filterable_fields if key in request.data}
+        for field in fields:
+            field_user = {field: fields[field]}
+            if User.objects.filter(**field_user).exists():
+                return Response({"error message": "This user already exists"})
+        if user_json.is_valid():
+            user_json.save()
+            return Response(user_json.data)
+        else:
+            return Response(user_json.errors,status=status.HTTP_404_NOT_FOUND)
     else:
-        return Response(user_json.errors,status=status.HTTP_404_NOT_FOUND)
+        return Response({"error_message": "account not found"})
 
 @api_view(['DELETE'])
 def delete_user(request,id):
@@ -83,19 +89,13 @@ def delete_user(request,id):
 @api_view(['PATCH'])
 def patch_user(request,id):
     parser_classes = (MultiPartParser, FormParser)
-    print(request.data)
+    # print(request.data)
     print(request.FILES)
     user = User.objects.get(pk=id)
     if request.method == 'PATCH':
         user_json = UserSerializer(user,data=request.data,partial=True)
-        # filterable_fields = ['username','email',"phone"]
-        # fields = {key: request.data[key] for key in filterable_fields if key in request.data}
-        # for field in fields :
-        #     field_user = {field:fields[field]}
-        #     if User.objects.filter(**field_user).exists():
-        #         return Response({"error message": "This data already exists"})
-        print(request.data)
-        print(user_json)
+        # print(request.data)
+        # print(user_json)
         if user_json.is_valid():
             user_json.save()
             return Response(user_json.data)

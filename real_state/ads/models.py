@@ -1,7 +1,5 @@
 from django.db import models
 from django.db.models import CASCADE
-
-
 # Create your models here.
 class Ads(models.Model):
     id = models.AutoField(primary_key=True)
