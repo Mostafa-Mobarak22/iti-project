@@ -131,8 +131,6 @@ def decode_data(encoded_data):
     decoded_data = base64.urlsafe_b64decode(encoded_data).decode('utf-8')
     user_name = decoded_data
     return user_name
-
-
 def activate_account(request, encoded_data):
     try:
         print(request)
@@ -164,3 +162,25 @@ def send_email(email, user_name,request):
         return False
     except Exception as e:
         return "Incorrect Email"
+
+@api_view(['POST'])
+def send_massage(request):
+    if request.method == "POST":
+        name = request.data["name"]
+        email = request.data['email']
+        massage = request.data['massage']
+        email_subject = f"{name} Want More Information About Your Property"
+        email_body = massage
+        email_massage = EmailMessage(
+        email_subject,
+        email_body,
+        "buyout71@gmail.com",
+        [email],
+        )
+        try:
+            email_massage.send(fail_silently=False)
+            return Response({"success_massage":"We will contact you as soon as possible"})
+        except Exception as e:
+            return Response({"error_massage":"There is a problem now, you can try again later"})
+    else:
+        return Response({"error": "invalid method"})
