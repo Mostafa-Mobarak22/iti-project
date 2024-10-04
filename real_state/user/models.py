@@ -20,6 +20,7 @@ class User(models.Model):
     register_photo = models.ImageField(upload_to='user/images/register/',null=True,blank=True)
     is_company = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
+    is_member = models.BooleanField(default=False)
     property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True,blank=True)
 
     def get_tokens_for_user(self):
