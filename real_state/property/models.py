@@ -5,24 +5,24 @@ from user.models import *
 # Create your models here.
 class Property(models.Model):
     property_type = [
-        ('residential', 'Residential'),
-        ('commercial', 'Commercial'),
+        ('Residential', 'Residential'),
+        ('Commercial', 'Commercial'),
     ]
     commercial_type = [
-    ('office', 'Office'),
-    ('retail', 'Retail'),
-    ('restaurant', 'Restaurant'),
-    ('pharmacy', 'Pharmacy'),
-    ('clinic', 'Clinic'),
-    ('commercial building', 'Commercial Building'),
-    ('commercial land', 'Commercial Land'),
-    ('agricultural', 'Agricultural'),
-    ('warehouse', 'Warehouse'),
-    ('other commercial', 'Other Commercial'),
-    ('garage', 'Garage'),
+    ('Office', 'Office'),
+    ('Retail', 'Retail'),
+    ('Restaurant', 'Restaurant'),
+    ('Pharmacy', 'Pharmacy'),
+    ('Clinic', 'Clinic'),
+    ('Commercial Building', 'Commercial Building'),
+    ('Commercial Land', 'Commercial Land'),
+    ('Agricultural', 'Agricultural'),
+    ('Warehouse', 'Warehouse'),
+    ('Garage', 'Garage'),
+    ('Other Commercial', 'Other Commercial'),
     ]
     countries = [
-        ('EG', 'Egypt'),
+        ('Egypt', 'Egypt'),
     ]
     governorates = [
         ('Cairo', 'Cairo'),
@@ -68,14 +68,14 @@ class Property(models.Model):
     bath = models.IntegerField(null=True,default=1)
     location = models.CharField(max_length=150,blank=False , validators=[MinLengthValidator(10)])
     listed_date = models.DateTimeField(auto_now_add=True)
-    country = models.CharField(max_length=2, choices=countries,blank=False)
+    country = models.CharField(max_length=5, choices=countries,blank=False)
     governorate = models.CharField(max_length=20,blank=False, choices=governorates)
     city = models.CharField(max_length=50,blank=False,validators=[MinLengthValidator(4)])
     street = models.CharField(max_length=50,validators=[MinLengthValidator(5)])
     commercial = models.CharField(max_length=20,blank=False, choices=commercial_type)
     is_sale = models.CharField(max_length=4,blank=False, choices=sale_rent,default="sale")
     image = models.ImageField(upload_to='property/images', blank=False)
-    area = models.DecimalField(max_digits=5, decimal_places=1,blank=False)
+    area = models.DecimalField(max_digits=7, decimal_places=1,blank=False)
     user_id = models.ForeignKey("user.User",blank=False,related_name='properties',on_delete=models.DO_NOTHING)
     ads_id = models.ForeignKey('ads.Ads', on_delete=models.CASCADE, related_name='property_ids',null=True,blank=True)
 
