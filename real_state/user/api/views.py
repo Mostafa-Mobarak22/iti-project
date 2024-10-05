@@ -89,7 +89,7 @@ def delete_user(request,id):
 @api_view(['PATCH'])
 def patch_user(request,id):
     parser_classes = (MultiPartParser, FormParser)
-    # print(request.data)
+    print(request.data)
     print(request.FILES)
     user = User.objects.get(pk=id)
     if request.method == 'PATCH':

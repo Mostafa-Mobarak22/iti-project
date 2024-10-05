@@ -21,7 +21,7 @@ class User(models.Model):
     is_company = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_member = models.BooleanField(default=False)
-    property_ids = models.ForeignKey('property.Property',on_delete=models.CASCADE,related_name='user_id',null=True,blank=True)
+    # property_ids = models.OneToOneField('property.Property',on_delete=models.CASCADE,related_name='user',null=True,blank=True)
 
     def get_tokens_for_user(self):
         token = RefreshToken.for_user(self)
