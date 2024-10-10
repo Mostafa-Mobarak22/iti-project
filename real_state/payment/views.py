@@ -3,23 +3,22 @@ import stripe
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status  
-
+from user.models import *
 stripe.api_key = 'sk_test_51Q6avVP03nsNhqhuze5BjUZaT4Iyd5JEmUZAvpOKlbAeQTxAbdnO6Iwm8SKQV7LQ6x5lcABuwepMKNyBvj62TlLj00npSXJgpw'
 
 class StripeCheckoutView(APIView):
     def post(self, request):
         try:
-            email = request.data.get('email')
-            username = request.data.get('username')
+            id = request.data.get('id')
             unit_amount = request.data.get('unit_amount')
-
-            if not email or not username or not unit_amount:
+            user = User.objects.get(pk=id)
+            if not user.id or not user.user_name or not unit_amount:
                 return Response({'error': 'Email, Username, and Unit Amount are required'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Create a new customer in Stripe
             customer = stripe.Customer.create(
-                email=email,
-                name=username
+                email=user.email,
+                name=user.user_name
             )
 
             # Create a Stripe session using price_data with recurring settings
@@ -31,7 +30,7 @@ class StripeCheckoutView(APIView):
                             'currency': 'usd',
                             'product_data': {
                                 'name': 'Account Pro Subscription',
-                                'description': f'Subscription for {username}',
+                                'description': f'Subscription for {user.user_name}',
                             },
                             'unit_amount': unit_amount,  # price in cents (e.g., 300 for $3.00)
                             'recurring': {
@@ -42,10 +41,10 @@ class StripeCheckoutView(APIView):
                     },
                 ],
                 mode='subscription',
-                success_url='http://localhost:5173/home?success=true',
+                success_url= f'http://localhost:5173/addproperty/{user.id}',
                 cancel_url='http://localhost:5173/?canceled=true',
                 metadata={
-                    'user_name': username
+                    'user_name': user.user_name
                 }
             )
 

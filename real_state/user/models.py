@@ -22,6 +22,7 @@ class User(models.Model):
     is_active = models.BooleanField(default=False)
     is_member = models.BooleanField(default=False)
     wish = models.IntegerField(blank=True, null=True)
+    is_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user_name

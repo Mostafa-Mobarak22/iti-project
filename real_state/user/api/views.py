@@ -113,7 +113,7 @@ def login_user(request):
                         'iat':datetime.datetime.utcnow(),
                     }
                     token = jwt.encode(payload,'secret',algorithm='HS256')
-                    return Response({"token":token,"user_name":request.data['user_name'],"id":User.objects.get(user_name=request.data['user_name']).id})
+                    return Response({"token":token,"user_name":request.data['user_name'],"id":User.objects.get(user_name=request.data['user_name']).id,"admin":User.objects.get(user_name=request.data['user_name']).is_admin})
                 else:
                     return Response({"not_active": "your account not active check your mail"})
             else:
