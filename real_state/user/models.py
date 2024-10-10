@@ -21,14 +21,12 @@ class User(models.Model):
     is_company = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_member = models.BooleanField(default=False)
-    # property_ids = models.OneToOneField('property.Property',on_delete=models.CASCADE,related_name='user',null=True,blank=True)
-
-    def get_tokens_for_user(self):
-        token = RefreshToken.for_user(self)
-        return {
-            'token': str(token),
-            'access': str(token.access_token),
-        }
+    wish = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.user_name
+
+class Wish(models.Model):
+    property_ids = models.JSONField(blank=True, null=True,default=[])
+    user_id = models.IntegerField(blank=False, null=False)
+    data = models.JSONField(blank=True, null=True,default=[])

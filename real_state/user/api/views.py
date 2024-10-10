@@ -1,7 +1,8 @@
 from unittest.result import failfast
 
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 
+from property.api.serializers import PropertySerializer
 from ..models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -39,8 +40,6 @@ def all_user(request):
 def add_user(request):
     if request.method == 'POST':
         user = UserSerializer(data=request.data)
-        print(request)
-        print(get_current_site(request).domain)
         filterable_fields = ['username','email',"phone"]
         fields = {key: request.data[key] for key in filterable_fields if key in request.data}
         for field in fields :
@@ -49,11 +48,11 @@ def add_user(request):
                 return Response({"error_message": "This user already exists"})
         if user.is_valid():
             user.save()
+
             if send_email(request.data['email'],request.data['user_name'],request):
                 return Response({"error_message": "Incorrect Email"})
             else :
-                # user.save()
-                print(get_current_site(request).domain)
+                add_wish(User.objects.get(user_name=request.data['user_name']).id)
                 return Response({"success_message": "Check Your Mail to Activate Your Account"},status=status.HTTP_201_CREATED)
         else:
             return Response(user.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -88,7 +87,6 @@ def delete_user(request,id):
 
 @api_view(['PATCH'])
 def patch_user(request,id):
-    parser_classes = (MultiPartParser, FormParser)
     print(request.data)
     print(request.FILES)
     user = User.objects.get(pk=id)
@@ -184,3 +182,66 @@ def send_massage(request):
             return Response({"error_massage":"There is a problem now, you can try again later"})
     else:
         return Response({"error": "invalid method"})
+
+def add_wish(id):
+    new_wish = Wish.objects.create(
+        user_id = id
+    )
+    new_wish.save()
+@api_view(["POST"])
+def add_data(request):
+    wishlist = Wish.objects.get(user_id=request.data["user_id"])
+    property_id = wishlist.property_ids
+    data = wishlist.data
+    if request.data["property_ids"] in property_id:
+        for x in property_id:
+            if request.data["property_ids"] == x:
+                property_id.remove(x)
+        for x in data:
+            print(x)
+            if request.data["property_ids"] == x["id"]:
+                data.remove(x)
+        wishlist.data = data
+        wishlist.property_ids = property_id
+        wishlist.save()
+        return Response({"error": "this property deleted"})
+    else:
+        property_id.append(request.data["property_ids"])
+        property = Property.objects.get(id=request.data["property_ids"])
+        new_data = {
+            "id": property.id,
+            "title": property.title,
+            "description": property.description,
+            "property_type": property.property_type,
+            "price": property.price,
+            "is_published": property.is_published,
+            "bed": property.bed,
+            "bath": property.bath,
+            "location": property.location,
+            "listed_date": property.listed_date.isoformat(),
+            "country": property.country,
+            "governorate": property.governorate,
+            "city": property.city,
+            "street": property.street,
+            "commercial": property.commercial,
+            "is_sale": property.is_sale,
+            "area": property.area.is_normal(),
+            "image": property.image.url if property.image else None,
+        }
+        data.append(new_data)
+        wishlist.data = data
+        wishlist.property_ids = property_id
+        wishlist.save()
+
+        return Response({"success": "property added to your wishlist"})
+
+@api_view(["GET"])
+def get_wishlist(request,id):
+    if request.method == 'GET':
+        if Wish.objects.filter(user_id=id).exists():
+            wish = Wish.objects.filter(user_id=id)
+            wish_json = WishListSerializer(wish,many=True)
+            return Response(data=wish_json.data, status=200)
+        else:
+            return Response({"error_message": "your wishlist is empty"})
+    return Response({"error_message": "invalid method"})

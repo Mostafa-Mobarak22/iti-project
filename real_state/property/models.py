@@ -74,15 +74,16 @@ class Property(models.Model):
     street = models.CharField(max_length=50,validators=[MinLengthValidator(5)])
     commercial = models.CharField(max_length=20,blank=False, choices=commercial_type)
     is_sale = models.CharField(max_length=4,blank=False, choices=sale_rent,default="sale")
-    image = models.ImageField(upload_to='property/images', blank=False)
     area = models.DecimalField(max_digits=7, decimal_places=1,blank=False)
     user_id = models.ForeignKey("user.User",blank=False,related_name='properties',on_delete=models.DO_NOTHING)
     ads_id = models.ForeignKey('ads.Ads', on_delete=models.CASCADE, related_name='property_ids',null=True,blank=True)
+    image = models.ImageField(upload_to='property/images', blank=False)
+
 
     def __str__(self):
         return self.title
 
 class PropertyImage(models.Model):
     property_id = models.ForeignKey(Property, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='property/images/', blank=False)
+    image = models.ImageField(upload_to='property/images', blank=False)
 

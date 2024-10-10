@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             'is_company': {'required': False},
             'is_active': {'required': False},
             'property_ids': {'required': False, 'allow_null': True},
+            "wish": {'required': False}
         }
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,4 +36,13 @@ class LoginSerializer(serializers.ModelSerializer):
             'register_photo': {'required': False, 'allow_null': True},
             'is_company': {'required': False},
             'property_ids': {'required': False, 'allow_null': True},
+            "wish":{'required': False}
+        }
+
+class WishListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wish
+        fields = '__all__'
+        extra_kwargs ={
+            'data':{'required': False}
         }
