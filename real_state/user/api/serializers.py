@@ -18,7 +18,9 @@ class UserSerializer(serializers.ModelSerializer):
             'is_company': {'required': False},
             'is_active': {'required': False},
             'property_ids': {'required': False, 'allow_null': True},
-            "wish": {'required': False}
+            "wish": {'required': False},
+            "member_duration": {'required': False},
+            "member_time": {'required': False}
         }
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:

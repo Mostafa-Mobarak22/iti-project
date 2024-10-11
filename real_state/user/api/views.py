@@ -87,13 +87,9 @@ def delete_user(request,id):
 
 @api_view(['PATCH'])
 def patch_user(request,id):
-    print(request.data)
-    print(request.FILES)
     user = User.objects.get(pk=id)
     if request.method == 'PATCH':
         user_json = UserSerializer(user,data=request.data,partial=True)
-        # print(request.data)
-        # print(user_json)
         if user_json.is_valid():
             user_json.save()
             return Response(user_json.data)

@@ -21,6 +21,8 @@ class User(models.Model):
     is_company = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_member = models.BooleanField(default=False)
+    member_duration = models.IntegerField(blank=True, null=True)
+    member_time = models.DateTimeField(null=True, blank=True)
     wish = models.IntegerField(blank=True, null=True)
     is_admin = models.BooleanField(default=False)
 
