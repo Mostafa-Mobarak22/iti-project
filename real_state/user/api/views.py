@@ -1,7 +1,8 @@
+from contextlib import nullcontext
 from unittest.result import failfast
 
 from django.shortcuts import redirect, get_object_or_404
-
+from datetime import date
 from property.api.serializers import PropertySerializer
 from ..models import *
 from rest_framework import status
@@ -109,6 +110,11 @@ def login_user(request):
                         'iat':datetime.datetime.utcnow(),
                     }
                     token = jwt.encode(payload,'secret',algorithm='HS256')
+                    if((date.today() - get_user.member_time).days==get_user.member_duration):
+                        get_user.member_duration = None
+                        get_user.member_time = None
+                        get_user.is_member = False
+                        get_user.save()
                     return Response({"token":token,"user_name":request.data['user_name'],"id":User.objects.get(user_name=request.data['user_name']).id,"admin":User.objects.get(user_name=request.data['user_name']).is_admin})
                 else:
                     return Response({"not_active": "your account not active check your mail"})
@@ -200,7 +206,7 @@ def add_data(request):
         wishlist.data = data
         wishlist.property_ids = property_id
         wishlist.save()
-        return Response({"error": "this property deleted"})
+        return Response({"success": "this property deleted from your wishlist"})
     else:
         property_id.append(request.data["property_ids"])
         property = Property.objects.get(id=request.data["property_ids"])
