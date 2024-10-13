@@ -110,11 +110,12 @@ def login_user(request):
                         'iat':datetime.datetime.utcnow(),
                     }
                     token = jwt.encode(payload,'secret',algorithm='HS256')
-                    if((date.today() - get_user.member_time).days==get_user.member_duration):
-                        get_user.member_duration = None
-                        get_user.member_time = None
-                        get_user.is_member = False
-                        get_user.save()
+                    if get_user.member_time is not None:
+                        if((date.today() - get_user.member_time).days==get_user.member_duration):
+                            get_user.member_duration = None
+                            get_user.member_time = None
+                            get_user.is_member = False
+                            get_user.save()
                     return Response({"token":token,"user_name":request.data['user_name'],"id":User.objects.get(user_name=request.data['user_name']).id,"admin":User.objects.get(user_name=request.data['user_name']).is_admin})
                 else:
                     return Response({"not_active": "your account not active check your mail"})
@@ -133,9 +134,7 @@ def decode_data(encoded_data):
     return user_name
 def activate_account(request, encoded_data):
     try:
-        print(request)
         username = decode_data(encoded_data)
-        print(username)
         user = User.objects.get(user_name=username)
         print(user)
         if user.is_active:
@@ -146,7 +145,6 @@ def activate_account(request, encoded_data):
     except (User.DoesNotExist, ValueError):
         return Response('Invalid activation link or user does not exist.')
 def send_email(email, user_name,request):
-    print(user_name)
     encoded_data = encode_data(user_name)
     activation_link = f"{get_current_site(request).domain}/user/activate/{encoded_data}/"
     email_subject = "Activate Your Account on Buyout"
@@ -247,3 +245,47 @@ def get_wishlist(request,id):
         else:
             return Response({"error_message": "your wishlist is empty"})
     return Response({"error_message": "invalid method"})
+@api_view(['POST'])
+def change_password(request):
+    if User.objects.filter(email=request.data['email']).exists():
+        encoded_data = encode_data(request.data['email'])
+        activation_link = f"{get_current_site(request).domain}/user/changepassword/{encoded_data}/"
+        email_subject = "Change Your Account Password"
+        email_body = activation_link
+        email_message = EmailMessage(
+            email_subject,
+            email_body,
+            "buyout71@gmail.com",
+            [request.data['email']],
+        )
+        try:
+            email_message.send(fail_silently=False)
+            return Response({"success":"Check Your Mail To change Password"})
+        except Exception as e:
+            return "Incorrect Email"
+    else:
+        return Response({"error":"This Email Invalid"})
+
+def get_password(request,encoded_data):
+    try:
+        email = decode_data(encoded_data)
+        if User.objects.filter(email=email).exists():
+            return redirect('http://localhost:5173/save')
+    except (User.DoesNotExist, ValueError):
+        return Response('Invalid activation link or user does not exist.')
+
+@api_view(['POST'])
+def save_password(request):
+    if request.method == "POST":
+        if User.objects.filter(email=request.data['email']).exists():
+            if request.data["new_password"]==request.data["repassword"]:
+                user = User.objects.get(email=request.data['email'])
+                user.password = request.data["new_password"]
+                user.save()
+                return Response({"success": "Password updated successfully"})
+            else:
+                return Response({"error": "Re_password  Invalid"})
+        else:
+            return Response({"error": "This Email Invalid"})
+    else:
+        return Response({"error": "invalid method"})

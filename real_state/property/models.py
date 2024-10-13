@@ -67,7 +67,7 @@ class Property(models.Model):
     bed = models.IntegerField(null=True,default=1)
     bath = models.IntegerField(null=True,default=1)
     location = models.CharField(max_length=150,blank=False , validators=[MinLengthValidator(10)])
-    listed_date = models.DateTimeField(auto_now_add=True)
+    listed_date = models.DateField(auto_now_add=True)
     country = models.CharField(max_length=5, choices=countries,blank=False)
     governorate = models.CharField(max_length=20,blank=False, choices=governorates)
     city = models.CharField(max_length=50,blank=False,validators=[MinLengthValidator(4)])
