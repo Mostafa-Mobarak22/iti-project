@@ -71,8 +71,8 @@ class Property(models.Model):
         ('Damietta', 'Damietta')
     ]
     sale_rent = [
-        ('sale','Sale'),
-        ('rent','Rent')
+        ('Sale','Sale'),
+        ('Rent','Rent')
     ]
 
     id = models.AutoField(primary_key=True)
@@ -90,7 +90,7 @@ class Property(models.Model):
     city = models.CharField(max_length=50,blank=False,validators=[MinLengthValidator(4)])
     street = models.CharField(max_length=50,validators=[MinLengthValidator(5)])
     commercial = models.CharField(max_length=20,blank=False, choices=commercial_type)
-    is_sale = models.CharField(max_length=4,blank=False, choices=sale_rent,default="sale")
+    is_sale = models.CharField(max_length=4,blank=False, choices=sale_rent,default="Sale")
     area = models.DecimalField(max_digits=7, decimal_places=1,blank=False)
     user_id = models.ForeignKey("user.User",blank=False,related_name='properties',on_delete=models.CASCADE)
     ads_id = models.ForeignKey('ads.Ads', on_delete=models.CASCADE, related_name='property_ids',null=True,blank=True)

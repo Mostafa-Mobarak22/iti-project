@@ -8,6 +8,7 @@ urlpatterns = [
     path('delete/<int:id>/',delete_user),
     path('<int:id>/',patch_user),
     path('massage/',send_massage),
+    path('confirm/',confirm_email),
     path('wishlist/',add_data),
     path('password/',change_password),
     path('changepassword/<str:encoded_data>/',get_password, name='get_password'),

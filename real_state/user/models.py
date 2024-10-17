@@ -23,7 +23,7 @@ class User(models.Model):
     is_member = models.BooleanField(default=False)
     member_duration = models.IntegerField(blank=True, null=True)
     member_time = models.DateField(null=True, blank=True)
-    wish = models.IntegerField(blank=True, null=True)
+    wish = models.IntegerField(blank=True, null=True ,default=0 )
     is_admin = models.BooleanField(default=False)
 
     def __str__(self):

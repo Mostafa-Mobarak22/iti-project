@@ -198,7 +198,6 @@ def add_data(request):
             if request.data["property_ids"] == x:
                 property_id.remove(x)
         for x in data:
-            print(x)
             if request.data["property_ids"] == x["id"]:
                 data.remove(x)
         wishlist.data = data
@@ -232,6 +231,14 @@ def add_data(request):
         wishlist.data = data
         wishlist.property_ids = property_id
         wishlist.save()
+        user = User.objects.get(pk=request.data["user_id"])
+        if user.wish==None :
+            user.wish = 1
+            user.save()
+        else:
+            count_property = user.wish
+            user.wish = count_property+1
+            user.save()
 
         return Response({"success": "property added to your wishlist"})
 
@@ -289,3 +296,26 @@ def save_password(request):
             return Response({"error": "This Email Invalid"})
     else:
         return Response({"error": "invalid method"})
+
+@api_view(['POST'])
+def confirm_email(request):
+    if request.method == "POST":
+        name = request.data["name"]
+        email = request.data['email']
+        massage = request.data['massage']
+        email_subject = f"{name} {massage}"
+        email_body = f"{name} {massage} Review Your Profile"
+        email_massage = EmailMessage(
+        email_subject,
+        email_body,
+        "buyout71@gmail.com",
+        [email],
+        )
+        try:
+            email_massage.send(fail_silently=False)
+            return Response({"success_massage":"We will contact you as soon as possible"})
+        except Exception as e:
+            return Response({"error_massage":"There is a problem now, you can try again later"})
+    else:
+        return Response({"error": "invalid method"})
+
