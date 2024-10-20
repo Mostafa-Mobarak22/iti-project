@@ -11,6 +11,7 @@ class Property(models.Model):
     commercial_type = [
     ('Office', 'Office'),
     ('Retail', 'Retail'),
+    ('Office Space', 'Office Space'),
     ('Restaurant', 'Restaurant'),
     ('Pharmacy', 'Pharmacy'),
     ('Clinic', 'Clinic'),

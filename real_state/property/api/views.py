@@ -1,21 +1,35 @@
-# property/views.py
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
-
 from property.models import Property, PropertyImage
-from rest_framework.response import Response
-from rest_framework import status
 from .serializers import PropertySerializer, PropertyImageSerializer
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
+
 class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
+    parser_classes = (MultiPartParser, FormParser)
 
+    def create(self, request, *args, **kwargs):
+        property_serializer = PropertySerializer(data=request.data)
+        property_serializer.is_valid(raise_exception=True)
+        property_instance = property_serializer.save()
+
+        # Now handle multiple image uploads
+        images = request.FILES.getlist('image')  # 'image' should match the file input name
+        print(request.FILES,images)
+        for image in images:
+            PropertyImage.objects.create(property_id=property_instance, image=image)
+
+        # Return a response after successfully creating the property and images
+        return Response(property_serializer.data, status=status.HTTP_201_CREATED)
 
 class PropertyImageViewSet(viewsets.ModelViewSet):
 
     queryset = PropertyImage.objects.all()
     serializer_class = PropertyImageSerializer
+
 
 @api_view(["GET"])
 def user(request,user_id):
