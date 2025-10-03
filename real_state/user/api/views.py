@@ -28,7 +28,6 @@ def user_details(request,id):
         else:
             return Response({"error_message": "account not found"})
     return Response({"error_message": "invalid method"})
-
 @api_view(['GET'])
 def all_user(request):
     if request.method == 'GET':
@@ -36,7 +35,6 @@ def all_user(request):
         user_json = UserSerializer(user,many=True)
         return Response(data=user_json.data, status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(['POST'])
 def add_user(request):
     if request.method == 'POST':
@@ -58,7 +56,6 @@ def add_user(request):
         else:
             return Response(user.errors,status=status.HTTP_400_BAD_REQUEST)
     return Response({"error_message": "invalid method"})
-
 @api_view(['PUT'])
 def update_user(request,id):
     if User.objects.filter(pk=id).exists():
@@ -77,7 +74,6 @@ def update_user(request,id):
             return Response(user_json.errors,status=status.HTTP_404_NOT_FOUND)
     else:
         return Response({"error_message": "account not found"})
-
 @api_view(['DELETE'])
 def delete_user(request,id):
     user=User.objects.filter(id=id)
@@ -85,7 +81,6 @@ def delete_user(request,id):
         user.delete()
         return Response(data={'msg':'deleted'})
     return Response({'msg':'user not found'})
-
 @api_view(['PATCH'])
 def patch_user(request,id):
     user = User.objects.get(pk=id)
@@ -95,7 +90,6 @@ def patch_user(request,id):
             user_json.save()
             return Response(user_json.data)
         return Response(user_json.errors,status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(['POST'])
 def login_user(request):
     if request.method == 'POST':
@@ -160,7 +154,6 @@ def send_email(email, user_name,request):
         return False
     except Exception as e:
         return "Incorrect Email"
-
 @api_view(['POST'])
 def send_massage(request):
     if request.method == "POST":
@@ -182,7 +175,6 @@ def send_massage(request):
             return Response({"error_massage":"There is a problem now, you can try again later"})
     else:
         return Response({"error": "invalid method"})
-
 def add_wish(id):
     new_wish = Wish.objects.create(
         user_id = id
@@ -207,6 +199,7 @@ def add_data(request):
     else:
         property_id.append(request.data["property_ids"])
         property = Property.objects.get(id=request.data["property_ids"])
+        print(property)
         new_data = {
             "id": property.id,
             "title": property.title,
@@ -241,7 +234,6 @@ def add_data(request):
             user.save()
 
         return Response({"success": "property added to your wishlist"})
-
 @api_view(["GET"])
 def get_wishlist(request,id):
     if request.method == 'GET':
@@ -272,7 +264,6 @@ def change_password(request):
             return "Incorrect Email"
     else:
         return Response({"error":"This Email Invalid"})
-
 def get_password(request,encoded_data):
     try:
         email = decode_data(encoded_data)
@@ -280,7 +271,6 @@ def get_password(request,encoded_data):
             return redirect('http://localhost:5173/save')
     except (User.DoesNotExist, ValueError):
         return Response('Invalid activation link or user does not exist.')
-
 @api_view(['POST'])
 def save_password(request):
     if request.method == "POST":
@@ -296,7 +286,6 @@ def save_password(request):
             return Response({"error": "This Email Invalid"})
     else:
         return Response({"error": "invalid method"})
-
 @api_view(['POST'])
 def confirm_email(request):
     if request.method == "POST":
